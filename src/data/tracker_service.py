@@ -27,7 +27,7 @@ def db_create_entry(startTime, endTime, lunchBreakStart, lunchBreakEnd, consulta
 def datetime_handler(x):
     if isinstance(x, datetime):
         return x.isoformat()
-    raise TypeError("Unknown type")
+    return x
 
 
 
@@ -41,7 +41,7 @@ def db_get_all():
         cursor.execute(SQL)
 
         rows = cursor.fetchall()
-        #print(data)
+
 
         columns = [col[0] for col in cursor.description]
 
@@ -49,7 +49,7 @@ def db_get_all():
 
 
         cursor.close()
-        json_data = json.dumps(data, default=datetime_handler)        
+        json_data = json.dumps({"entry_list": data}, default=datetime_handler)        
         return json_data
     
     except (Exception, psycopg2.DatabaseError) as error:
