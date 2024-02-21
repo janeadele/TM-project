@@ -3,6 +3,7 @@ from psycopg2.extras import RealDictCursor
 from config import config
 import json
 from datetime import datetime
+import pandas as pd
 
 
 def db_create_entry(startTime, endTime, lunchBreakStart, lunchBreakEnd, consultantName, customerName):
@@ -30,6 +31,58 @@ def datetime_handler(x):
     return x
 
 
+def db_update_balances(startTime, endTime, lunchBreakStart, lunchBreakEnd, consultantName):
+    con = None
+
+    #calculate hours
+    hours = 0
+
+    start = datetime.strptime(startTime, "%Y-%m-%d %H:%M:%S")
+    end = datetime.strptime(endTime, "%Y-%m-%d %H:%M:%S")
+    lstart = datetime.strptime(lunchBreakStart, "%Y-%m-%d %H:%M:%S")
+    lend = datetime.strptime(lunchBreakEnd, "%Y-%m-%d %H:%M:%S")
+    lunch = lend-lstart
+    hours = end-start-lunch
+
+    hours = hours.total_seconds() / 3600
+
+    try:
+        con = psycopg2.connect(**config())
+        cursor = con.cursor()
+        #check if employee in the database
+        employee = False
+        SQL = "SELECT * FROM balance WHERE consultantname =%s;"
+        add_data = (consultantName,)
+        cursor.execute(SQL, add_data)
+        rows = cursor.fetchall()
+        print(rows)
+        if rows:
+            employee = True
+
+
+        if employee:
+            SQL = "UPDATE balance SET hour_balance = hour_balance + %s WHERE consultantname = %s;"
+
+            add_data = (hours, consultantName)
+            cursor.execute(SQL, add_data)
+            con.commit()
+            result = {"success": "updated balances"}
+            cursor.close()
+            return json.dumps(result)
+        
+        else:
+            SQL = "INSERT INTO balance (consultantName, hour_balance) VALUES (%s,%s);"
+            add_data = (consultantName, hours)
+            cursor.execute(SQL, add_data)
+            con.commit()
+            result = {"success": "updated balances"}
+            cursor.close()
+            return json.dumps(result)
+    except (Exception, psycopg2.DatabaseError) as error:
+        print(error)
+    finally:
+        if con is not None:
+            con.close()
 
 #now_str = now.isoformat()
 def db_get_all():
@@ -133,5 +186,7 @@ def db_delete_person(id):
 
 if __name__ == '__main__':
     #db_create_entry('2024-02-16 08:25:00', '2024-02-16 15:55:00', '2024-02-16 12:25:00', '2024-02-16 12:55:00', 'Matti', 'Valio')
-    print(db_get_all())
-
+    #print(db_get_all())
+    #db_update_balances("Maiju",5)
+    #db_update_balances('2024-02-16 08:25:00', '2024-02-16 15:55:00', '2024-02-16 12:25:00', '2024-02-16 12:55:00', 'Maria')
+    pass

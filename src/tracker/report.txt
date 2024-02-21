@@ -19,4 +19,4 @@ consultantname customername  week  work_h
         Taylor        Nokia     8     7.0
         Taylor        Nokia     9     7.0
         Taylor        Valio     8     7.0
-        Taylor        Valio     9     7.0
+        Taylor        Valio     9     7.0jane testing
