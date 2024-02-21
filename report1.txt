@@ -1,0 +1,43 @@
+consultantname customername  week  work_h
+          Alex        Nokia     8     7.0
+          Alex        Nokia     9     7.0
+          Alex        Nokia    10     7.0
+          Alex        Valio     7     7.0
+          Alex        Valio     9     7.0
+          Alex        Valio    10     7.0
+         Jamie        Nokia     8     7.0
+         Jamie        Nokia     9     7.0
+         Jamie        Valio     8     7.0
+         Jamie        Valio     9     7.0
+         Kalle        Fazer     7     7.0
+    Maijuleena        Fazer     7     7.0
+    Maijuleena        Fazer     8     7.0
+         Maria        Fazer     7     7.0
+         Maria        Valio     7    14.0
+         Matti        Nokia     7     7.0
+         Matti        Nokia     8     7.0
+         Matti        Nokia    10     7.0
+         Matti        Valio     7    21.0
+         Matti        Valio     8     7.0
+         Matti        Valio    10     7.0
+         Minna        Valio     7    14.0
+        Taylor        Nokia     8     7.0
+        Taylor        Nokia     9     7.0
+        Taylor        Valio     8     7.0
+        Taylor        Valio     9     7.0
+
+ Alex  Jamie  Kalle  Maijuleena  Maria  Matti  Minna  Taylor  total_hours
+  NaN    NaN   21.0         7.0    7.0    NaN    NaN     NaN         35.0
+  7.0    7.0    NaN         NaN    NaN    7.0    NaN     7.0         28.0
+ 14.0   14.0    NaN         NaN    7.0    7.0    7.0    28.0         77.0
+
+consultantname
+ 7.000000
+ 7.000000
+ 7.000000
+ 7.000000
+10.500000
+ 9.333333
+ 7.000000
+ 7.000000
+
