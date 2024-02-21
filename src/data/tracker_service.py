@@ -43,9 +43,11 @@ def db_get_all():
         rows = cursor.fetchall()
 
 
+
         columns = [col[0] for col in cursor.description]
 
         data = [dict(zip(columns, row)) for row in rows]
+        data = {item['id']: item for item in data}
 
         cursor.close()
         json_data = json.dumps({"entry_list": data}, default=datetime_handler)        
