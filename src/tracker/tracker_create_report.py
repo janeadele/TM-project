@@ -62,9 +62,9 @@ def create_report(json_string):
 
     df['week'] = df['starttime'].dt.isocalendar().week
     
-    print(df)
+    #print(df[['endtime', 'week']])
     grouped = df.groupby(['consultantname', 'customername','week'])['work_h'].sum().reset_index()
-    print(grouped)
+    #print(grouped)
     return(grouped)
 
 
@@ -76,4 +76,5 @@ def write_file(text):
 
 data = get_all()
 report = create_report(data)
+print(report)
 write_file(report)
