@@ -89,8 +89,11 @@ def create_cumulative_report(json_string):
     # Group by 'customer' and 'consultant', calculate cumulative working hours
     grouped['cumulative_working_hours'] = df.groupby(['customername', 'consultantname'])['work_h'].cumsum()
 
+
     # Pivot the DataFrame to show each consultant's cumulative working hours for each customer
     pivot_df = grouped.pivot_table(index='customername', columns='consultantname', values='cumulative_working_hours', aggfunc='max')
+    # Replace NaN values with zero
+    pivot_df = pivot_df.fillna(0)
 
     #Calculate total hours for each customer
     pivot_df['total_hours'] = pivot_df.sum(axis=1)
@@ -121,17 +124,16 @@ def create_avghours_report(json_string):
     total_hours_per_day = df.groupby(['consultantname', 'day'])['work_h'].sum().reset_index()
 
     # Group by consultant, calculate the average hours worked across all days
-    avg_hours_per_person = total_hours_per_day.groupby('consultantname')['work_h'].mean()
+    avg_hours_per_person = total_hours_per_day.groupby('consultantname')['work_h'].mean().round(1)
 
     print(avg_hours_per_person)
     return(avg_hours_per_person)
 
-#create a file named 'report.txt' to the tracker folder
+'''#create a file named 'report.txt' to the tracker folder
 def write_file(text):
     as_string = text.to_string(index=False)
     with open('report.txt', 'w') as file:
-        file.write(as_string)
-
+        file.write(as_string)'''
 
 data = get_all()
 report = create_tracking_report(data)
@@ -149,7 +151,7 @@ def write_to_txt_file(*args):
 
 # Example usage:
 report1_string = report.to_string(index=False)
-report2_string = report2.to_string(index=False)
-report3_string = report3.to_string(index=False)
+report2_string = report2.to_string(index=True)
+report3_string = report3.to_string(index=True)
 
 write_to_txt_file(report1_string, report2_string, report3_string)

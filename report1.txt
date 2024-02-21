@@ -26,18 +26,19 @@ consultantname customername  week  work_h
         Taylor        Valio     8     7.0
         Taylor        Valio     9     7.0
 
- Alex  Jamie  Kalle  Maijuleena  Maria  Matti  Minna  Taylor  total_hours
-  NaN    NaN   21.0         7.0    7.0    NaN    NaN     NaN         35.0
-  7.0    7.0    NaN         NaN    NaN    7.0    NaN     7.0         28.0
- 14.0   14.0    NaN         NaN    7.0    7.0    7.0    28.0         77.0
+consultantname  Alex  Jamie  Kalle  Maijuleena  Maria  Matti  Minna  Taylor  total_hours
+customername                                                                            
+Fazer            0.0    0.0   21.0         7.0    7.0    0.0    0.0     0.0         35.0
+Nokia            7.0    7.0    0.0         0.0    0.0    7.0    0.0     7.0         28.0
+Valio           14.0   14.0    0.0         0.0    7.0    7.0    7.0    28.0         77.0
 
 consultantname
- 7.000000
- 7.000000
- 7.000000
- 7.000000
-10.500000
- 9.333333
- 7.000000
- 7.000000
+Alex           7.0
+Jamie          7.0
+Kalle          7.0
+Maijuleena     7.0
+Maria         10.5
+Matti          9.3
+Minna          7.0
+Taylor         7.0
 
