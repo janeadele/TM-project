@@ -1,5 +1,5 @@
 from flask import Flask, request
-from tracker_service import db_get_all, db_create_entry
+from tracker_service import db_get_all, db_create_entry, db_update_balances
 
 app = Flask(__name__)
 
@@ -27,6 +27,7 @@ def create_person():
         consultantName = data['consultantName']
         customerName = data ['customerName']
         db_create_entry(startTime, endTime, lunchBreakStart, lunchBreakEnd, consultantName, customerName)
+        db_update_balances(startTime, endTime, lunchBreakStart, lunchBreakEnd, consultantName)
         return {"success": "created a new entry:"}
     except:
         return {"error": "error creating entry"}

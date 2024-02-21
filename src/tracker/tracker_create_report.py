@@ -74,6 +74,7 @@ def write_file(text):
     with open('report.txt', 'w') as file:
         file.write(as_string)
 
+
 data = get_all()
 report = create_report(data)
 print(report)
