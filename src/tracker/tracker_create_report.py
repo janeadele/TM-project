@@ -43,11 +43,10 @@ def get_all():
         if con is not None:
             con.close()
 #startTime, endTime, lunchBreakStart, lunchBreakEnd, consultantName, customerName) 
-def create_report(json_string):
+def create_tracking_report(json_string):
     data = json.loads(json_string)
     df = pd.DataFrame(data)
     
-
 # Select columns representing date and time
     date_time_columns = ['starttime', 'endtime', 'lunchbreakstart', 'lunchbreakend']
 
@@ -64,9 +63,68 @@ def create_report(json_string):
     
     #print(df[['endtime', 'week']])
     grouped = df.groupby(['consultantname', 'customername','week'])['work_h'].sum().reset_index()
-    #print(grouped)
+
+    print(grouped)
     return(grouped)
 
+
+def create_cumulative_report(json_string):
+    data = json.loads(json_string)
+    df = pd.DataFrame(data)
+    
+# Select columns representing date and time
+    date_time_columns = ['starttime', 'endtime', 'lunchbreakstart', 'lunchbreakend']
+
+# Convert selected columns to datetime objects
+    df[date_time_columns] = df[date_time_columns].apply(pd.to_datetime)
+
+
+    df['lunchbreak'] = df['lunchbreakend']-df['lunchbreakstart']
+    df['workhours'] = df['endtime'] - df['starttime']-df['lunchbreak']
+    df['work_h'] = df['workhours'].dt.total_seconds() / 3600
+    
+    #print(df[['endtime', 'week']])
+    grouped = df.groupby(['consultantname', 'customername'])['work_h'].sum().reset_index()
+
+    # Group by 'customer' and 'consultant', calculate cumulative working hours
+    grouped['cumulative_working_hours'] = df.groupby(['customername', 'consultantname'])['work_h'].cumsum()
+
+    # Pivot the DataFrame to show each consultant's cumulative working hours for each customer
+    pivot_df = grouped.pivot_table(index='customername', columns='consultantname', values='cumulative_working_hours', aggfunc='max')
+
+    #Calculate total hours for each customer
+    pivot_df['total_hours'] = pivot_df.sum(axis=1)
+
+    print(pivot_df)
+    return(pivot_df)   
+
+
+def create_avghours_report(json_string):
+    data = json.loads(json_string)
+    df = pd.DataFrame(data)
+    
+# Select columns representing date and time
+    date_time_columns = ['starttime', 'endtime', 'lunchbreakstart', 'lunchbreakend']
+
+# Convert selected columns to datetime objects
+    df[date_time_columns] = df[date_time_columns].apply(pd.to_datetime)
+
+
+    df['lunchbreak'] = df['lunchbreakend']-df['lunchbreakstart']
+    df['workhours'] = df['endtime'] - df['starttime']-df['lunchbreak']
+    df['work_h'] = df['workhours'].dt.total_seconds() / 3600
+
+    # Extract the day from the start_time
+    df['day'] = df['starttime'].dt.date
+
+    # Group by consultant and day, calculate the total hours worked each day
+    total_hours_per_day = df.groupby(['consultantname', 'day'])['work_h'].sum().reset_index()
+
+    # Group by consultant, calculate the average hours worked across all days
+    avg_hours_per_person = total_hours_per_day.groupby('consultantname')['work_h'].mean()
+
+    print(avg_hours_per_person)
+    return(avg_hours_per_person)
 
 #create a file named 'report.txt' to the tracker folder
 def write_file(text):
@@ -75,6 +133,22 @@ def write_file(text):
         file.write(as_string)
 
 data = get_all()
-report = create_report(data)
-print(report)
-write_file(report)
+report = create_tracking_report(data)
+report2 = create_cumulative_report(data)
+report3 = create_avghours_report(data)
+#print(report)
+#write_file(report)
+
+def write_to_txt_file(*args):
+    # Open the file in write mode ('w')
+    with open('report1.txt', 'w') as file:
+        # Write each text variable to the file
+        for report in args:
+            file.write(report + 2*'\n')  # You may want to add a newline character
+
+# Example usage:
+report1_string = report.to_string(index=False)
+report2_string = report2.to_string(index=False)
+report3_string = report3.to_string(index=False)
+
+write_to_txt_file(report1_string, report2_string, report3_string)
