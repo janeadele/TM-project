@@ -22,4 +22,4 @@ blob_client = BlobClient.from_connection_string(
 # Open a local file and upload its contents to Blob Storage
 with open("./testfile.txt", "rb") as data:
     blob_client.upload_blob(data)
-    print(f"Uploaded sample-source.txt to {blob_client.url}")
+    print(f"Uploaded report.txt to {blob_client.url}")
