@@ -57,16 +57,23 @@ def create_report(json_string):
 
     df['lunchbreak'] = df['lunchbreakend']-df['lunchbreakstart']
     df['workhours'] = df['endtime'] - df['starttime']-df['lunchbreak']
+    df['work_h'] = df['workhours'].dt.total_seconds() / 3600
+
+
     df['week'] = df['starttime'].dt.isocalendar().week
+    
     print(df)
-    grouped = df.groupby(['consultantname', 'customername','week'])['workhours'].sum().reset_index()
+    grouped = df.groupby(['consultantname', 'customername','week'])['work_h'].sum().reset_index()
     print(grouped)
+    return(grouped)
 
 
 #create a file named 'report.txt' to the tracker folder
-def write_file():
-    pass
+def write_file(text):
+    as_string = text.to_string(index=False)
+    with open('report.txt', 'w') as file:
+        file.write(as_string)
 
 data = get_all()
-create_report(data)
-write_file()
+report = create_report(data)
+write_file(report)

@@ -1,0 +1,3 @@
+consultantname customername  week  work_h
+         Matti        Valio     7    14.0
+         Minna        Valio     7    14.0
