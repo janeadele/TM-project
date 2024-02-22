@@ -6,8 +6,6 @@ import json
 from datetime import datetime
 import pandas as pd
 
-# from ..data.tracker_service import db_get_all
-
 def datetime_handler(x):
     if isinstance(x, datetime):
         return x.isoformat()
@@ -31,7 +29,7 @@ def get_all():
 
         columns = [col[0] for col in cursor.description]
         data = [dict(zip(columns, row)) for row in rows]
-        #data = {item['id']: item for item in data}
+
         cursor.close()
         json_data = json.dumps(data, default=datetime_handler)
 
@@ -42,7 +40,7 @@ def get_all():
     finally:
         if con is not None:
             con.close()
-#startTime, endTime, lunchBreakStart, lunchBreakEnd, consultantName, customerName) 
+
 def create_tracking_report(json_string):
     data = json.loads(json_string)
     df = pd.DataFrame(data)
@@ -61,7 +59,6 @@ def create_tracking_report(json_string):
 
     df['week'] = df['starttime'].dt.isocalendar().week
     
-    #print(df[['endtime', 'week']])
     grouped = df.groupby(['consultantname', 'customername','week'])['work_h'].sum().reset_index()
 
     print(grouped)
@@ -83,7 +80,7 @@ def create_cumulative_report(json_string):
     df['workhours'] = df['endtime'] - df['starttime']-df['lunchbreak']
     df['work_h'] = df['workhours'].dt.total_seconds() / 3600
     
-    #print(df[['endtime', 'week']])
+  
     grouped = df.groupby(['consultantname', 'customername'])['work_h'].sum().reset_index()
 
     # Group by 'customer' and 'consultant', calculate cumulative working hours
@@ -106,10 +103,10 @@ def create_avghours_report(json_string):
     data = json.loads(json_string)
     df = pd.DataFrame(data)
     
-# Select columns representing date and time
+#Select columns representing date and time
     date_time_columns = ['starttime', 'endtime', 'lunchbreakstart', 'lunchbreakend']
 
-# Convert selected columns to datetime objects
+#Convert selected columns to datetime objects
     df[date_time_columns] = df[date_time_columns].apply(pd.to_datetime)
 
 
@@ -117,41 +114,40 @@ def create_avghours_report(json_string):
     df['workhours'] = df['endtime'] - df['starttime']-df['lunchbreak']
     df['work_h'] = df['workhours'].dt.total_seconds() / 3600
 
-    # Extract the day from the start_time
+    #Extract the day from the start_time
     df['day'] = df['starttime'].dt.date
 
-    # Group by consultant and day, calculate the total hours worked each day
+    #Group by consultant and day, calculate the total hours worked each day
     total_hours_per_day = df.groupby(['consultantname', 'day'])['work_h'].sum().reset_index()
 
-    # Group by consultant, calculate the average hours worked across all days
-    avg_hours_per_person = total_hours_per_day.groupby('consultantname')['work_h'].mean().round(1)
+    #Group by consultant, calculate the average hours worked across all days
+    avg_hours_per_person = total_hours_per_day.groupby('consultantname')['work_h'].mean().round(1).to_frame(name='daily_avg_hours').reset_index()
 
     print(avg_hours_per_person)
     return(avg_hours_per_person)
 
-'''#create a file named 'report.txt' to the tracker folder
-def write_file(text):
-    as_string = text.to_string(index=False)
-    with open('report.txt', 'w') as file:
-        file.write(as_string)'''
 
 data = get_all()
-report = create_tracking_report(data)
+report1 = create_tracking_report(data)
 report2 = create_cumulative_report(data)
 report3 = create_avghours_report(data)
-#print(report)
-#write_file(report)
 
 def write_to_txt_file(*args):
-    # Open the file in write mode ('w')
-    with open('report1.txt', 'w') as file:
-        # Write each text variable to the file
+    #Open the file in write mode ('w')
+    with open('report.txt', 'w') as file:
+        #Write each text variable to the file
+        file.write("CONSULTANT HOURS REPORT"+ '\n')
         for report in args:
-            file.write(report + 2*'\n')  # You may want to add a newline character
+            file.write(report + 2*'\n')
+            file.write("-----------------------------------------------------------------------------------------------"+ '\n')
 
-# Example usage:
-report1_string = report.to_string(index=False)
+
+#Create variables for tables and their titles and write them to a txt file
+report1_title = "Consultant hours per week and per project:"
+report2_title = "Total consultant hours per project:"
+report3_title = "Consultant average daily hours:"
+report1_string = report1.to_string(index=False)
 report2_string = report2.to_string(index=True)
-report3_string = report3.to_string(index=True)
+report3_string = report3.to_string(index=False)
 
-write_to_txt_file(report1_string, report2_string, report3_string)
+write_to_txt_file(report1_title, report1_string, report2_title, report2_string, report3_title, report3_string)
