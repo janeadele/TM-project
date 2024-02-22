@@ -1,3 +1,7 @@
+CONSULTANT HOURS REPORT
+Consultant hours per week and per project:
+
+-----------------------------------------------------------------------------------------------
 consultantname customername  week  work_h
           Alex        Nokia     8     7.0
           Alex        Nokia     9     7.0
@@ -9,6 +13,11 @@ consultantname customername  week  work_h
          Jamie        Nokia     9     7.0
          Jamie        Valio     8     7.0
          Jamie        Valio     9     7.0
+         Kalle        Fazer     7     7.0
+    Maijuleena        Fazer     7     7.0
+    Maijuleena        Fazer     8     7.0
+         Maria        Fazer     7     7.0
+         Maria        Valio     7    14.0
          Matti        Nokia     7     7.0
          Matti        Nokia     8     7.0
          Matti        Nokia    10     7.0
@@ -19,4 +28,30 @@ consultantname customername  week  work_h
         Taylor        Nokia     8     7.0
         Taylor        Nokia     9     7.0
         Taylor        Valio     8     7.0
-        Taylor        Valio     9     7.0jane testing
+        Taylor        Valio     9     7.0
+
+-----------------------------------------------------------------------------------------------
+Total consultant hours per project:
+
+-----------------------------------------------------------------------------------------------
+consultantname  Alex  Jamie  Kalle  Maijuleena  Maria  Matti  Minna  Taylor  total_hours
+customername                                                                            
+Fazer            0.0    0.0   21.0         7.0    7.0    0.0    0.0     0.0         35.0
+Nokia            7.0    7.0    0.0         0.0    0.0    7.0    0.0     7.0         28.0
+Valio           14.0   14.0    0.0         0.0    7.0    7.0    7.0    28.0         77.0
+
+-----------------------------------------------------------------------------------------------
+Consultant average daily hours:
+
+-----------------------------------------------------------------------------------------------
+consultantname  daily_avg_hours
+          Alex              7.0
+         Jamie              7.0
+         Kalle              7.0
+    Maijuleena              7.0
+         Maria             10.5
+         Matti              9.3
+         Minna              7.0
+        Taylor              7.0
+
+-----------------------------------------------------------------------------------------------
