@@ -13,17 +13,11 @@ CREATE TABLE hours (
 );
 
 CREATE TABLE balance (employee_id SERIAL PRIMARY KEY, consultantName VARCHAR(255), hour_balance INT);
-Minna 1
-Matti 2
-Alex 3
-Jamie 4
-Taylor 5
+
 
 INSERT INTO balance (consultantName, hour_balance) VALUES ('Minna', 0), ('Matti', 0),('Alex', 0),('Jamie', 0),('Taylor', 0);
 
-psql -h timemanagement.postgres.database.azure.com -p 5432 --dbname=timemanagement -U timeuser
 
-pg_restore -U timeuser -h timemanagement.postgres.database.azure.com -d timemanagement -W -v "C:\Skillio\Week 3\TM project\dumpfile.dump"
 
 INSERT INTO hours (startTime, endTime, lunchBreakStart, lunchBreakEnd, consultantName, customerName) 
 VALUES

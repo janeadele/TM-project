@@ -84,7 +84,7 @@ def db_update_balances(startTime, endTime, lunchBreakStart, lunchBreakEnd, consu
         if con is not None:
             con.close()
 
-#now_str = now.isoformat()
+
 def db_get_all():
     con = None
     try:
@@ -94,8 +94,6 @@ def db_get_all():
         cursor.execute(SQL)
 
         rows = cursor.fetchall()
-
-
 
         columns = [col[0] for col in cursor.description]
 

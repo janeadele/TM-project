@@ -69,10 +69,10 @@ def create_cumulative_report(json_string):
     data = json.loads(json_string)
     df = pd.DataFrame(data)
     
-# Select columns representing date and time
+#Select columns representing date and time
     date_time_columns = ['starttime', 'endtime', 'lunchbreakstart', 'lunchbreakend']
 
-# Convert selected columns to datetime objects
+#Convert selected columns to datetime objects
     df[date_time_columns] = df[date_time_columns].apply(pd.to_datetime)
 
 
@@ -83,13 +83,13 @@ def create_cumulative_report(json_string):
   
     grouped = df.groupby(['consultantname', 'customername'])['work_h'].sum().reset_index()
 
-    # Group by 'customer' and 'consultant', calculate cumulative working hours
+    #Group by 'customername' and 'consultantname', calculate cumulative working hours
     grouped['cumulative_working_hours'] = df.groupby(['customername', 'consultantname'])['work_h'].cumsum()
 
 
-    # Pivot the DataFrame to show each consultant's cumulative working hours for each customer
+    #Pivot the DataFrame to show each consultant's cumulative working hours for each customer
     pivot_df = grouped.pivot_table(index='customername', columns='consultantname', values='cumulative_working_hours', aggfunc='max')
-    # Replace NaN values with zero
+    #Replace NaN values with zero
     pivot_df = pivot_df.fillna(0)
 
     #Calculate total hours for each customer
