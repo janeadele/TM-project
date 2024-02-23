@@ -2,6 +2,8 @@
 import os
 import uuid
 
+
+
 # Import the client object from the SDK library
 from azure.storage.blob import BlobClient
 
@@ -9,7 +11,17 @@ from azure.storage.blob import BlobClient
     # Retrieve the connection string from an environment variable. Note that a
     # connection string grants all permissions to the caller, making it less
     # secure than obtaining a BlobClient object using credentials.
-conn_string = os.environ["AZURE_STORAGE_CONNECTION_STRING"]
+
+from azure.identity import DefaultAzureCredential
+from azure.keyvault.secrets import SecretClient
+# Azure Key Vault details
+key_vault_url = "https://timetrackerproject.vault.azure.net/"
+secret_name = "storageconnection"
+# Connect to Azure Key Vault and retrieve the secret
+credential = DefaultAzureCredential()
+client = SecretClient(vault_url=key_vault_url, credential=credential)
+conn_string = client.get_secret(secret_name).value
+
 
     # Create the client object for the resource identified by the connection
     # string, indicating also the blob container and the name of the specific
