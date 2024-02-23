@@ -1,13 +1,13 @@
 
 import psycopg2
 from psycopg2.extras import RealDictCursor
-from config import config
 import json
 from datetime import datetime
 import pandas as pd
-
 from azure.identity import DefaultAzureCredential
 from azure.keyvault.secrets import SecretClient
+
+
 
 def datetime_handler(x):
     if isinstance(x, datetime):
@@ -16,7 +16,7 @@ def datetime_handler(x):
 
 # Azure Key Vault details
 key_vault_url = "https://timetrackerproject.vault.azure.net/"
-secret_name = "timedatabase"
+secret_name = "storageconnection"
 # Connect to Azure Key Vault and retrieve the secret
 credential = DefaultAzureCredential()
 client = SecretClient(vault_url=key_vault_url, credential=credential)
@@ -35,7 +35,6 @@ dsn = f"dbname={conn_params.get('Database')} user={username} password={conn_para
 
 
 
-
 '''Create a software that reads the daily/weekly consultant time tracking from PostgreSQL database table 
 and writes a report to a text file. 
 This report is then uploaded to storage account as a blob for your team leader to read.
@@ -48,30 +47,6 @@ def get_all():
         con = psycopg2.connect(dsn)
         cursor = con.cursor()
         SQL = 'SELECT * FROM hours;'
-        cursor.execute(SQL)
-
-        rows = cursor.fetchall()
-
-        columns = [col[0] for col in cursor.description]
-        data = [dict(zip(columns, row)) for row in rows]
-
-        cursor.close()
-        json_data = json.dumps(data, default=datetime_handler)
-
-        return json_data
-    
-    except (Exception, psycopg2.DatabaseError) as error:
-        print(error)
-    finally:
-        if con is not None:
-            con.close()
-
-def get_balances():
-    con = None
-    try:
-        con = psycopg2.connect(dsn)
-        cursor = con.cursor()
-        SQL = 'SELECT * FROM balance;'
         cursor.execute(SQL)
 
         rows = cursor.fetchall()
@@ -147,10 +122,6 @@ def create_cumulative_report(json_string):
     print(pivot_df)
     return(pivot_df)   
 
-def create_balance_report(json_string):
-    data = json.loads(json_string)
-    df = pd.DataFrame(data)
-    return df
 
 def create_avghours_report(json_string):
     data = json.loads(json_string)
@@ -181,12 +152,9 @@ def create_avghours_report(json_string):
 
 
 data = get_all()
-data2 = get_balances()
-report4 = create_balance_report(data2)
 report1 = create_tracking_report(data)
 report2 = create_cumulative_report(data)
 report3 = create_avghours_report(data)
-
 
 def write_to_txt_file(*args):
     #Open the file in write mode ('w')
@@ -202,10 +170,8 @@ def write_to_txt_file(*args):
 report1_title = "Consultant hours per week and per project:"
 report2_title = "Total consultant hours per project:"
 report3_title = "Consultant average daily hours:"
-report4_title = "Consultant hour balances:"
 report1_string = report1.to_string(index=False)
 report2_string = report2.to_string(index=True)
 report3_string = report3.to_string(index=False)
-report4_string = report4.to_string(index = False)
 
-write_to_txt_file(report1_title, report1_string, report2_title, report2_string, report3_title, report3_string, report4_title, report4_string)
+write_to_txt_file(report1_title, report1_string, report2_title, report2_string, report3_title, report3_string)

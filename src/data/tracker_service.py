@@ -5,11 +5,35 @@ import json
 from datetime import datetime
 import pandas as pd
 
+from azure.identity import DefaultAzureCredential
+from azure.keyvault.secrets import SecretClient
+
+# Azure Key Vault details
+key_vault_url = "https://timetrackerproject.vault.azure.net/"
+secret_name = "timedatabase"
+# Connect to Azure Key Vault and retrieve the secret
+credential = DefaultAzureCredential()
+client = SecretClient(vault_url=key_vault_url, credential=credential)
+conn_str = client.get_secret(secret_name).value
+
+
+# Parse the connection string
+conn_params = dict(item.split('=') for item in conn_str.split(';') if item)
+
+# The `Username` field from the connection string contains the user and the server name in some cases
+# We need to extract only the username part for the DSN
+username = conn_params.get('Username').split('@')[0] if '@' in conn_params.get('Username', '') else conn_params.get('Username')
+
+# Construct the DSN string for psycopg2
+dsn = f"dbname={conn_params.get('Database')} user={username} password={conn_params.get('Password')} host={conn_params.get('Host')} port={conn_params.get('Port')} sslmode=require"
+
+
+
 
 def db_create_entry(startTime, endTime, lunchBreakStart, lunchBreakEnd, consultantName, customerName):
     con = None
     try:
-        con = psycopg2.connect(**config())
+        con = psycopg2.connect(dsn)
         cursor = con.cursor()
         SQL = '''INSERT INTO hours (startTime, endTime, lunchBreakStart, lunchBreakEnd, consultantName, customerName) 
                  VALUES (%s,%s,%s,%s,%s,%s);'''
@@ -47,7 +71,7 @@ def db_update_balances(startTime, endTime, lunchBreakStart, lunchBreakEnd, consu
     hours = hours.total_seconds() / 3600
 
     try:
-        con = psycopg2.connect(**config())
+        con = psycopg2.connect(dsn)
         cursor = con.cursor()
         #check if employee in the database
         employee = False
@@ -88,7 +112,7 @@ def db_update_balances(startTime, endTime, lunchBreakStart, lunchBreakEnd, consu
 def db_get_all():
     con = None
     try:
-        con = psycopg2.connect(**config())
+        con = psycopg2.connect(dsn)
         cursor = con.cursor()
         SQL = 'SELECT * FROM hours;'
         cursor.execute(SQL)
